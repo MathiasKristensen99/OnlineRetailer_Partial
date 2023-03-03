@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using CustomerApi.Data;
+using CustomerApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<CustomerApiContext>(opt => opt.UseInMemoryDatabase("CustomerDb"));
+
+builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+
+builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -18,6 +23,15 @@ var app = builder.Build();
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// Initialize the database.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetService<CustomerApiContext>();
+    var dbInitializer = services.GetService<IDbInitializer>();
+    dbInitializer.Initialize(dbContext);
 }
 
 app.UseAuthorization();
