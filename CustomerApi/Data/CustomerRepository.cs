@@ -1,5 +1,6 @@
 using CustomerApi.Models;
 using CustomerApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CustomerApi.Data;
 
@@ -13,26 +14,31 @@ public class CustomerRepository : IRepository<Customer>
     
     public IEnumerable<Customer> GetAll()
     {
-        throw new NotImplementedException();
+        return db.Customers.ToList();
     }
 
     public Customer Get(int id)
     {
-        throw new NotImplementedException();
+        return db.Customers.FirstOrDefault(c => c.Id == id);
     }
 
     public Customer Add(Customer entity)
     {
-        throw new NotImplementedException();
+        var newCustomer = db.Customers.Add(entity).Entity;
+        db.SaveChanges();
+        return newCustomer;
     }
 
     public void Edit(Customer entity)
     {
-        throw new NotImplementedException();
+        db.Entry(entity).State = EntityState.Modified;
+        db.SaveChanges();
     }
 
     public void Remove(int id)
     {
-        throw new NotImplementedException();
+        var customer = db.Customers.FirstOrDefault(c => c.id == id);
+        db.Customers.Remove(order);
+        db.SaveChanges();
     }
 }
