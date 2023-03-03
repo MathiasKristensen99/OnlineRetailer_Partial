@@ -1,1 +1,21 @@
 version: "3.9"
+
+services:
+  customerapi:
+    build:
+      context: .
+      dockerfile: "./CustomerApi/Dockerfile"
+    ports:
+      - 8000:80
+  orderapi:
+    build:
+      context: .
+      dockerfile: "OrderApi/Dockerfile"
+    ports:
+      - 8001:80
+  productapi:
+    build:
+      context: .
+      dockerfile: "ProductApi/Dockerfile"
+    ports:
+      - 8002:80

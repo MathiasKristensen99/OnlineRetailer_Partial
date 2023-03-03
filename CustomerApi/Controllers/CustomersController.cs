@@ -6,7 +6,7 @@ namespace CustomerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         // GET: api/<CustomerController>
         [HttpGet]
