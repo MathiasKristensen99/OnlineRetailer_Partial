@@ -37,8 +37,8 @@ public class CustomerRepository : IRepository<Customer>
 
     public void Remove(int id)
     {
-        var customer = db.Customers.FirstOrDefault(c => c.id == id);
-        db.Customers.Remove(order);
+        var customer = db.Customers.FirstOrDefault(c => c.Id == id);
+        db.Customers.Remove(customer);
         db.SaveChanges();
     }
 }
