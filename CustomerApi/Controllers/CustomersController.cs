@@ -62,7 +62,7 @@ namespace CustomerApi.Controllers
                 Phone = customer.Phone,
                 BillingAddress = customer.BillingAddress,
                 ShippingAddress = customer.ShippingAddress,
-                CreditStanding = customer.CreditStanding
+                GoodCreditStanding = customer.GoodCreditStanding
             });
         }
 

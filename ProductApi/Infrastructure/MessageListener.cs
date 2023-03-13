@@ -21,7 +21,7 @@ namespace ProductApi.Infrastructure
         {
             using (bus = RabbitHutch.CreateBus(connectionString))
             {
-                bus.PubSub.Subscribe<OrderCreatedMessage>("productApiHkCreated", HandleOrderCreated);
+                bus.PubSub.Subscribe<OrderCreatedMessage>("productApiCreated", HandleOrderCreated);
             }
 
             lock (this)

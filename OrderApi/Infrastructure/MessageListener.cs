@@ -20,9 +20,9 @@ namespace OrderApi.Infrastructure
         {
             using (bus = RabbitHutch.CreateBus(connectionString))
             {
-                bus.PubSub.Subscribe<OrderAcceptedMessage>("orderApiHkAccepted", HandleOrderAccepted);
+                bus.PubSub.Subscribe<OrderAcceptedMessage>("orderApiAccepted", HandleOrderAccepted);
 
-                bus.PubSub.Subscribe<OrderRejectedMessage>("orderApiHkRejected", HandleOrderRejected);
+                bus.PubSub.Subscribe<OrderRejectedMessage>("orderApiRejected", HandleOrderRejected);
 
                 lock (this)
                 {

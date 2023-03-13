@@ -8,6 +8,6 @@
         public string Phone { get; set; }
         public string BillingAddress { get; set; }
         public string ShippingAddress { get; set; }
-        public double CreditStanding { get; set; }
+        public bool GoodCreditStanding { get; set; }
     }
 }

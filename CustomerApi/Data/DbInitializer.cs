@@ -13,28 +13,28 @@ public class DbInitializer : IDbInitializer
         {
             new Customer
             {
-                Name = "Test Bobsen",
+                Name = "Test 1",
                 BillingAddress = "Hejvej 123",
                 Email = "Hejmail123@mail.dk",
-                CreditStanding = 100.0,
+                GoodCreditStanding = true,
                 Phone = "12345678",
                 ShippingAddress = "Hejvej 123"
             },
             new Customer
             {
-                Name = "Test Bobsen",
+                Name = "Test 2",
                 BillingAddress = "Hejvej 123",
                 Email = "Hejmail123@mail.dk",
-                CreditStanding = 100.0,
+                GoodCreditStanding = true,
                 Phone = "12345678",
                 ShippingAddress = "Hejvej 123"
             },
             new Customer
             {
-                Name = "Test Bobsen",
+                Name = "Test 3",
                 BillingAddress = "Hejvej 123",
                 Email = "Hejmail123@mail.dk",
-                CreditStanding = 100.0,
+                GoodCreditStanding = false,
                 Phone = "12345678",
                 ShippingAddress = "Hejvej 123"
             }
