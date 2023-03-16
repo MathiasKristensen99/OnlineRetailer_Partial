@@ -24,6 +24,7 @@ namespace CustomerApi.Infrastructure
                 bus.PubSub.Subscribe<OrderCreatedMessage>("customerApiCreated", HandleOrderCreated);
                 bus.PubSub.Subscribe<OrderPaidMessage>("customerApiPaid", HandleOrderPaid);
 
+                // Block the thread so that it will not exit and stop subscribing.
                 lock (this)
                 {
                     Monitor.Wait(this);
