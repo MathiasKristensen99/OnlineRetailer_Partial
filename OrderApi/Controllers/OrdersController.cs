@@ -81,9 +81,20 @@ namespace OrderApi.Controllers
         [HttpPut("{id}/cancel")]
         public IActionResult Cancel(int id)
         {
-            throw new NotImplementedException();
-
-            // Add code to implement this method.
+            try
+            {
+                _repository.Edit(new Order
+                {
+                    Id = id,
+                    Status = Order.OrderStatus.cancelled
+                });
+                _messagePublisher.PublishOrderCancelledMessage(id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "An error happened. Try again.");
+            }
         }
 
         // PUT orders/5/ship
@@ -92,9 +103,19 @@ namespace OrderApi.Controllers
         [HttpPut("{id}/ship")]
         public IActionResult Ship(int id)
         {
-            throw new NotImplementedException();
-
-            // Add code to implement this method.
+            try
+            {
+                _repository.Edit(new Order
+                {
+                    Id = id,
+                    Status = Order.OrderStatus.shipped
+                });
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "An error happened. Try again.");
+            }
         }
 
         // PUT orders/5/pay
@@ -103,9 +124,19 @@ namespace OrderApi.Controllers
         [HttpPut("{id}/pay")]
         public IActionResult Pay(int id)
         {
-            throw new NotImplementedException();
-
-            // Add code to implement this method.
+            try
+            {
+                _repository.Edit(new Order
+                {
+                    Id = id,
+                    Status = Order.OrderStatus.paid
+                });
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "An error happened. Try again.");
+            }
         }
     }
 }
