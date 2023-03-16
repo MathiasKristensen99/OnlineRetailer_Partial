@@ -24,6 +24,10 @@ namespace OrderApi.Infrastructure
 
                 bus.PubSub.Subscribe<OrderRejectedMessage>("orderApiRejected", HandleOrderRejected);
 
+                bus.PubSub.Subscribe<OrderPaidMessage>("orderApiPaidAccepted", HandleOrderPaid);
+
+                bus.PubSub.Subscribe<OrderRejectedMessage>("orderApiPaidRejected", HandleOrderPaidRejected);
+
                 lock (this)
                 {
                     Monitor.Wait(this);
@@ -33,26 +37,46 @@ namespace OrderApi.Infrastructure
 
         private void HandleOrderAccepted(OrderAcceptedMessage message)
         {
-            using (var scope = provider.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var orderRepos = services.GetService<IRepository<Order>>();
+            using var scope = provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
 
-                var order = orderRepos.Get(message.OrderId);
-                order.Status = Order.OrderStatus.completed;
-                orderRepos.Edit(order);
-            }
+            var order = orderRepos.Get(message.OrderId);
+            order.Status = Order.OrderStatus.completed;
+            orderRepos.Edit(order);
         }
 
         private void HandleOrderRejected(OrderRejectedMessage message)
         {
-            using (var scope = provider.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var orderRepos = services.GetService<IRepository<Order>>();
+            using var scope = provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
 
-                orderRepos.Remove(message.OrderId);
-            }
+            orderRepos.Remove(message.OrderId);
+        }
+
+        private void HandleOrderPaid(OrderPaidMessage message)
+        {
+            using var scope = provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
+
+            var order = orderRepos.Get(message.OrderId);
+            order.Status = Order.OrderStatus.paid;
+
+            orderRepos.Edit(order);
+        }
+
+        private void HandleOrderPaidRejected(OrderRejectedMessage message)
+        {
+            using var scope = provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var orderRepos = services.GetService<IRepository<Order>>();
+
+            var order = orderRepos.Get(message.OrderId);
+            order.Status = Order.OrderStatus.cancelled;
+
+            orderRepos.Edit(order);
         }
     }
 }

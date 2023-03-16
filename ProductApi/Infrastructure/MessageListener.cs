@@ -32,36 +32,34 @@ namespace ProductApi.Infrastructure
 
         private void HandleOrderCreated(OrderCreatedMessage message)
         {
-            using (var scope = _provider.CreateScope())
+            using var scope = _provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var productRepos = services.GetService<IRepository<Product>>();
+
+            if (ProductItemsAvailable(message.OrderLines, productRepos))
             {
-                var services = scope.ServiceProvider;
-                var productRepos = services.GetService<IRepository<Product>>();
-
-                if (ProductItemsAvailable(message.OrderLines, productRepos))
+                foreach (var orderLine in message.OrderLines)
                 {
-                    foreach (var orderLine in message.OrderLines)
-                    {
-                        var product = productRepos.Get(orderLine.ProductId);
-                        product.ItemsReserved += orderLine.Quantity;
-                        productRepos.Edit(product);
-                    }
-
-                    var replyMessage = new OrderAcceptedMessage
-                    {
-                        OrderId = message.OrderId
-                    };
-
-                    bus.PubSub.Publish(replyMessage);
+                    var product = productRepos.Get(orderLine.ProductId);
+                    product.ItemsReserved += orderLine.Quantity;
+                    productRepos.Edit(product);
                 }
-                else
+
+                var replyMessage = new OrderAcceptedMessage
                 {
-                    var replyMessage = new OrderRejectedMessage
-                    {
-                        OrderId = message.OrderId
-                    };
+                    OrderId = message.OrderId
+                };
 
-                    bus.PubSub.Publish(replyMessage);
-                }
+                bus.PubSub.Publish(replyMessage);
+            }
+            else
+            {
+                var replyMessage = new OrderRejectedMessage
+                {
+                    OrderId = message.OrderId
+                };
+
+                bus.PubSub.Publish(replyMessage);
             }
         }
 
