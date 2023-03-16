@@ -111,6 +111,7 @@ namespace OrderApi.Controllers
                     Id = id,
                     Status = Order.OrderStatus.shipped
                 });
+                _messagePublisher.PublishOrderShippedMessage(id);
                 return Ok();
             }
             catch (Exception e)
@@ -141,7 +142,7 @@ namespace OrderApi.Controllers
                     }
                     Thread.Sleep(200);
                 }
-
+                
                 return Ok();
             }
             catch (Exception e)
