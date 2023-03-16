@@ -22,37 +22,27 @@ namespace CustomerApi.Infrastructure
             using (bus = RabbitHutch.CreateBus(connectionString))
             {
                 bus.PubSub.Subscribe<OrderCreatedMessage>("customerApiCreated", HandleOrderCreated);
-            }
+                bus.PubSub.Subscribe<OrderPaidMessage>("customerApiPaid", HandleOrderPaid);
 
-            lock (this)
-            {
-                Monitor.Wait(this);
+                lock (this)
+                {
+                    Monitor.Wait(this);
+                }
             }
         }
 
         private void HandleOrderCreated(OrderCreatedMessage message)
         {
-            using (var scope = _provider.CreateScope())
+            using var scope = _provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var customerRepository= services.GetService<IRepository<Customer>>();
+
+            if (message.CustomerId.HasValue)
             {
-                var services = scope.ServiceProvider;
-                var customerRepository= services.GetService<IRepository<Customer>>();
-
-                if (message.CustomerId.HasValue)
+                var customerId = message.CustomerId.Value;
+                if (CustomerHasGoodStanding(customerId, customerRepository))
                 {
-                    var customerId = message.CustomerId.Value;
-                    if (CustomerHasGoodStanding(customerId, customerRepository))
-                    {
-                        var replyMessage = new OrderAcceptedMessage
-                        {
-                            OrderId = message.OrderId
-                        };
-
-                        bus.PubSub.Publish(replyMessage);
-                    }
-                }
-                else
-                {
-                    var replyMessage = new OrderRejectedMessage
+                    var replyMessage = new OrderAcceptedMessage
                     {
                         OrderId = message.OrderId
                     };
@@ -60,9 +50,49 @@ namespace CustomerApi.Infrastructure
                     bus.PubSub.Publish(replyMessage);
                 }
             }
+            else
+            {
+                var replyMessage = new OrderRejectedMessage
+                {
+                    OrderId = message.OrderId
+                };
+
+                bus.PubSub.Publish(replyMessage);
+            }
         }
 
-        private bool CustomerHasGoodStanding(int customerId, IRepository<Customer> customerRepository)
+        private void HandleOrderPaid(OrderPaidMessage message)
+        {
+            using var scope = _provider.CreateScope();
+            var services = scope.ServiceProvider;
+            var customerRepository = services.GetService<IRepository<Customer>>();
+
+            if (CustomerHasGoodStanding(message.CustomerId, customerRepository))
+            {
+                var customer = customerRepository.Get(message.CustomerId);
+                customer.GoodCreditStanding = true;
+                customerRepository.Edit(customer);
+
+                var replyMessage = new OrderPaidMessage
+                {
+                    CustomerId = message.CustomerId,
+                    OrderId = message.OrderId
+                };
+
+                bus.PubSub.Publish(replyMessage);
+            }
+            else
+            {
+                var replyMessage = new OrderRejectedMessage
+                {
+                    OrderId = message.OrderId
+                };
+
+                bus.PubSub.Publish(replyMessage);
+            }
+        }
+
+        private static bool CustomerHasGoodStanding(int customerId, IRepository<Customer> customerRepository)
         {
             var customer = customerRepository.Get(customerId);
             if (customer != null && customer.GoodCreditStanding)
