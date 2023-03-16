@@ -5,6 +5,7 @@ using OrderApi.Data;
 using OrderApi.Infrastructure;
 using SharedModels;
 using RestSharp;
+using static SharedModels.Order;
 
 namespace OrderApi.Controllers
 {
@@ -126,11 +127,21 @@ namespace OrderApi.Controllers
         {
             try
             {
-                _repository.Edit(new Order
+                var order = _repository.Get(id);
+
+                _messagePublisher.PublishOrderPaidMessage(order.Id, order.CustomerId);
+
+                bool completed = false;
+                while (!completed)
                 {
-                    Id = id,
-                    Status = Order.OrderStatus.paid
-                });
+                    var tentativeOrder = _repository.Get(order.Id);
+                    if (tentativeOrder.Status == OrderStatus.paid)
+                    {
+                        completed = true;
+                    }
+                    Thread.Sleep(200);
+                }
+
                 return Ok();
             }
             catch (Exception e)

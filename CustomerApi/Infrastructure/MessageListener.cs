@@ -67,15 +67,14 @@ namespace CustomerApi.Infrastructure
             var services = scope.ServiceProvider;
             var customerRepository = services.GetService<IRepository<Customer>>();
 
-            if (CustomerHasGoodStanding(message.CustomerId, customerRepository))
+            if (!CustomerHasGoodStanding(message.CustomerId, customerRepository))
             {
                 var customer = customerRepository.Get(message.CustomerId);
                 customer.GoodCreditStanding = true;
                 customerRepository.Edit(customer);
 
-                var replyMessage = new OrderPaidMessage
+                var replyMessage = new OrderPayAcceptedMessage
                 {
-                    CustomerId = message.CustomerId,
                     OrderId = message.OrderId
                 };
 

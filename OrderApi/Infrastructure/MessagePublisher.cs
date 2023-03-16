@@ -46,11 +46,12 @@ namespace OrderApi.Infrastructure
 
             _bus.PubSub.Publish(message);
         }
-        public void PublishOrderPaidMessage(int orderId)
+        public void PublishOrderPaidMessage(int orderId, int customerId)
         {
             var message = new OrderPaidMessage
             {
-                OrderId = orderId
+                OrderId = orderId,
+                CustomerId = customerId
             };
 
             _bus.PubSub.Publish(message);
