@@ -17,7 +17,7 @@ namespace OrderApi.Infrastructure
             _bus.Dispose();
         }
 
-        public void PublishOrderCreatedMessage(int? customerId, int orderId, IList<OrderLine> orderLines)
+        public void PublishOrderCreatedMessage(int customerId, int orderId, IList<OrderLine> orderLines)
         {
             var message = new OrderCreatedMessage
             {

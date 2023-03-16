@@ -22,6 +22,7 @@ namespace OrderApi.Data
             
             var newOrder = db.Orders.Add(entity).Entity;
             db.SaveChanges();
+            Console.WriteLine(newOrder.Date);
             return newOrder;
         }
 
@@ -33,7 +34,10 @@ namespace OrderApi.Data
 
         Order IRepository<Order>.Get(int id)
         {
-            return db.Orders.FirstOrDefault(o => o.Id == id);
+            var order = db.Orders.Include(o => o.OrderLines).FirstOrDefault(o => o.Id == id);
+            // Reload the order from the database instead of using a cached copy
+            db.Entry<Order>(order).Reload();
+            return order;
         }
 
         IEnumerable<Order> IRepository<Order>.GetAll()

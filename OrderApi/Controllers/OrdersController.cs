@@ -56,7 +56,7 @@ namespace OrderApi.Controllers
 
                 _messagePublisher.PublishOrderCreatedMessage(newOrder.CustomerId, newOrder.Id, newOrder.OrderLines);
 
-                bool completed = false;
+                var completed = false;
                 while (!completed)
                 {
                     var tentativeOrder = _repository.Get(newOrder.Id);
