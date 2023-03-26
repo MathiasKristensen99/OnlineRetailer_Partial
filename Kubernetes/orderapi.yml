@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: orderapi
-        image: onlineretailer_partial-orderapi:latest
+        image: mathiaskristensen99/onlineretailer_partial-orderapi:latest
 ---
 apiVersion: v1
 kind: Service

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: productapi
-        image: onlineretailer_partial-productapi:latest
+        image: mathiaskristensen99/onlineretailer_partial-productapi:latest
 ---
 apiVersion: v1
 kind: Service

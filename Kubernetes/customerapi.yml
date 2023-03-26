@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: customerapi
-        image: onlineretailer_partial-customerapi:latest
+        image: mathiaskristensen99/onlineretailer_partial-customerapi:latest
 ---
 apiVersion: v1
 kind: Service
