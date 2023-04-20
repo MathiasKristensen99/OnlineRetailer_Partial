@@ -7,19 +7,35 @@ services:
       dockerfile: "./CustomerApi/Dockerfile"
     ports:
       - 8000:80
+      - 7431:443
   orderapi:
     build:
       context: .
       dockerfile: "OrderApi/Dockerfile"
     ports:
       - 8001:80
+      - 7432:443
   productapi:
     build:
       context: .
       dockerfile: "ProductApi/Dockerfile"
     ports:
       - 8002:80
+      - 7433:443
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "15673:15672"
+  apigateway:
+    build:
+      context: .
+      dockerfile: "ApiGateway/Dockerfile"
+    ports:
+      - 8080:80
+      - 7430:443
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
