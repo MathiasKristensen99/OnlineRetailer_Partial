@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductApi.Data;
 using ProductApi.Infrastructure;
 using ProductApi.Models;
+using Prometheus;
 using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,8 +46,12 @@ using (var scope = app.Services.CreateScope())
 //app.UseHttpsRedirection();
 Task.Factory.StartNew(() => new MessageListener(app.Services, rabbitmqConnectionString).Start());
 
+app.UseHttpMetrics();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapMetrics();
 
 app.Run();

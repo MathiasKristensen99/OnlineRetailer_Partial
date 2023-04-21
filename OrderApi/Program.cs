@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderApi.Data;
 using OrderApi.Infrastructure;
+using Prometheus;
 using SharedModels;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,9 +47,12 @@ Task.Factory.StartNew(() =>
     new MessageListener(app.Services, rabbitmqConnectionString).Start());
 
 //app.UseHttpsRedirection();
+app.UseHttpMetrics();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapMetrics();
 
 app.Run();

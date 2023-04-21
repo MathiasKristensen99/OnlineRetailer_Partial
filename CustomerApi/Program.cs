@@ -4,6 +4,7 @@ using CustomerApi.Infrastructure;
 using CustomerApi.Models;
 using ProductApi.Models;
 using SharedModels;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,10 @@ Task.Factory.StartNew(() => new MessageListener(app.Services, rabbitmqConnection
 
 app.UseAuthorization();
 
+app.UseHttpMetrics();
+
 app.MapControllers();
+
+app.MapMetrics();
 
 app.Run();
